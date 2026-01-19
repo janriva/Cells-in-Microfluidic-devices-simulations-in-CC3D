@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/CellInLiquid.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/CellInLiquid.py</PythonScript>
+   <Resource Type="Python">Simulation/CellInLiquidSteppables.py</Resource>
+</Simulation>

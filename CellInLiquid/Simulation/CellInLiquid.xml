@@ -1,0 +1,162 @@
+<CompuCell3D Revision="5" Version="4.7.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+      <MCSConversionFactor DisplayName="No conversion" Units="-">1.0</MCSConversionFactor>
+      <VoxelConversionFactor DisplayName="No conversion" Units="-">1.0</VoxelConversionFactor>
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="500" y="104" z="1"/>
+      <Steps>100000</Steps>
+      <Temperature>10.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType TypeId="1" TypeName="Cell"/>
+      <CellType TypeId="2" TypeName="Wall" Freeze=""/>
+      <CellType TypeId="3" TypeName="Liquid"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"/>
+   
+   <Plugin Name="PixelTracker"/>
+   
+   <Plugin Name="ExternalPotential">
+      <Algorithm>CenterOfMassBased</Algorithm>
+   </Plugin>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Plugin Name="Contact">
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">0.0</Energy>
+      <Energy Type1="Medium" Type2="Cell">12.0</Energy>
+      <Energy Type1="Medium" Type2="Wall">5.0</Energy>
+      <Energy Type1="Medium" Type2="Liquid">12.0</Energy>
+      <Energy Type1="Cell" Type2="Cell">8.0</Energy>
+      <Energy Type1="Cell" Type2="Wall">0.0</Energy>
+      <Energy Type1="Cell" Type2="Liquid">15.0</Energy>
+      <Energy Type1="Wall" Type2="Wall">0.0</Energy>
+      <Energy Type1="Wall" Type2="Liquid">0.0</Energy>
+      <Energy Type1="Liquid" Type2="Liquid">15.0</Energy>
+      <NeighborOrder>4</NeighborOrder>
+   </Plugin>
+   
+   <Steppable Type="UniformInitializer">
+      <Region>
+         <BoxMin x="0" y="0" z="0"/>
+         <BoxMax x="179" y="1" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+      <Region>
+         <BoxMin x="0" y="102" z="0"/>
+         <BoxMax x="179" y="103" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+
+      <Region>
+         <BoxMin x="178" y="2" z="0"/>
+         <BoxMax x="179" y="37" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+      <Region>
+         <BoxMin x="178" y="66" z="0"/>
+         <BoxMax x="179" y="102" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+
+      <Region>
+         <BoxMin x="180" y="36" z="0"/>
+         <BoxMax x="259" y="37" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+      <Region>
+         <BoxMin x="180" y="66" z="0"/>
+         <BoxMax x="259" y="67" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+
+      <Region>
+         <BoxMin x="258" y="0" z="0"/>
+         <BoxMax x="259" y="36" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+      <Region>
+         <BoxMin x="258" y="68" z="0"/>
+         <BoxMax x="259" y="103" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+
+      <Region>
+         <BoxMin x="260" y="0" z="0"/>
+         <BoxMax x="499" y="1" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+      <Region>
+         <BoxMin x="260" y="102" z="0"/>
+         <BoxMax x="499" y="103" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Wall</Types>
+      </Region>
+
+      
+      <Region>
+         <BoxMin x="120" y="40" z="0"/>
+         <BoxMax x="121" y="41" z="1"/>
+         <Gap>0</Gap>
+         <Width>20</Width>
+         <Types>Cell</Types>
+      </Region>
+      
+   </Steppable>
+   
+   
+   
+  <Steppable Type="BlobInitializer">
+   <Region>
+      <Center x="399" y="51" z="0"/>
+      <Radius>41</Radius>  <!-- 15 -->
+      <Gap>0</Gap>
+      <Width>1</Width>
+      <Types>Wall</Types>
+   </Region>
+</Steppable>
+</CompuCell3D>
