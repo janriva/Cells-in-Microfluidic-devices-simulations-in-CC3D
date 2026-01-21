@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/Advection_Chem.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/Advection_Chem.py</PythonScript>
+   <Resource Type="Python">Simulation/Advection_ChemSteppables.py</Resource>
+</Simulation>

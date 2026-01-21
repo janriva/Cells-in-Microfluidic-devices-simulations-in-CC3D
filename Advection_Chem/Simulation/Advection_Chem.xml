@@ -1,0 +1,87 @@
+<CompuCell3D Revision="5" Version="4.7.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+      <MCSConversionFactor DisplayName="No conversion" Units="-">1.0</MCSConversionFactor>
+      <VoxelConversionFactor DisplayName="No conversion" Units="-">1.0</VoxelConversionFactor>
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="100" y="100" z="1"/>
+      <Steps>100000</Steps>
+      <Temperature>10.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType Freeze="" TypeId="1" TypeName="Wall"/>
+   </Plugin>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Steppable Type="DiffusionSolverFE">
+      
+      <!-- Specification of PDE solvers -->
+      <DiffusionField Name="OXYGEN">
+         <DiffusionData>
+            <FieldName>OXYGEN</FieldName>
+            <GlobalDiffusionConstant>1</GlobalDiffusionConstant>
+            <GlobalDecayConstant>0.0</GlobalDecayConstant>
+            <InitialConcentrationExpression>0.0</InitialConcentrationExpression>
+            <DiffusionCoefficient CellType="Wall">0.0</DiffusionCoefficient>
+            <DecayCoefficient CellType="Wall">0.0</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Medium"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Wall"/>
+         </SecretionData>
+         <BoundaryConditions>
+            <!-- Play with ConstantDerivative and ConstantValue to see diferent behaivours -->
+            <Plane Axis="X">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+            <Plane Axis="Y">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+   </Steppable>
+   
+   <Steppable Type="UniformInitializer">
+      
+      <!-- Initial layout of cells in the form of rectangular slab -->
+      <Region>
+         <BoxMin x="20" y="0" z="0"/>
+         <BoxMax x="40" y="40" z="1"/>
+         <Gap>0</Gap>
+         <Width>7</Width>
+         <Types>Wall</Types>
+      </Region>
+      <Region>
+         <BoxMin x="20" y="60" z="0"/>
+         <BoxMax x="40" y="100" z="1"/>
+         <Gap>0</Gap>
+         <Width>7</Width>
+         <Types>Wall</Types>
+      </Region>
+   </Steppable>
+</CompuCell3D>
