@@ -55,33 +55,35 @@
          <BoundaryConditions>
             <!-- Play with ConstantDerivative and ConstantValue to see diferent behaivours -->
             <Plane Axis="X">
-               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
-               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+               <!-- <ConstantDerivative PlanePosition="Min" Value="0.0"/> -->
+               <!-- <ConstantDerivative PlanePosition="Max" Value="0.0"/> -->
+               <Periodic/>
             </Plane>
             <Plane Axis="Y">
-               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
-               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+               <!-- <ConstantDerivative PlanePosition="Min" Value="0.0"/> -->
+               <!-- <ConstantDerivative PlanePosition="Max" Value="0.0"/> -->
+               <Periodic/>
             </Plane>
          </BoundaryConditions>
       </DiffusionField>
    </Steppable>
    
-   <Steppable Type="UniformInitializer">
+   <!-- <Steppable Type="UniformInitializer"> -->
       
-      <!-- Initial layout of cells in the form of rectangular slab -->
-      <Region>
-         <BoxMin x="20" y="0" z="0"/>
-         <BoxMax x="40" y="40" z="1"/>
-         <Gap>0</Gap>
-         <Width>7</Width>
-         <Types>Wall</Types>
-      </Region>
-      <Region>
-         <BoxMin x="20" y="60" z="0"/>
-         <BoxMax x="40" y="100" z="1"/>
-         <Gap>0</Gap>
-         <Width>7</Width>
-         <Types>Wall</Types>
-      </Region>
-   </Steppable>
+      
+      <!-- <Region> -->
+         <!-- <BoxMin x="20" y="0" z="0"/> -->
+         <!-- <BoxMax x="40" y="40" z="1"/> -->
+         <!-- <Gap>0</Gap> -->
+         <!-- <Width>7</Width> -->
+         <!-- <Types>Wall</Types> -->
+      <!-- </Region> -->
+      <!-- <Region> -->
+         <!-- <BoxMin x="20" y="60" z="0"/> -->
+         <!-- <BoxMax x="40" y="100" z="1"/> -->
+         <!-- <Gap>0</Gap> -->
+         <!-- <Width>7</Width> -->
+         <!-- <Types>Wall</Types> -->
+      <!-- </Region> -->
+   <!-- </Steppable> -->
 </CompuCell3D>

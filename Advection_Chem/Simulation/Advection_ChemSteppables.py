@@ -21,19 +21,25 @@ class Advection_ChemSteppable(SteppableBasePy):
         
         :param mcs: current Monte Carlo step
         """
+        dt = 1
+        dx = 1
         field = self.field.OXYGEN
-        v = 0.1 #No pot ser mes gran que 1 sino peta
-        field[60:65, 50:55, :] = 10
+        v = 0.5 #No pot ser mes gran que 1 sino peta
+        # field[60:65, 50:55, :] = 10
+        sumat = 0
         for i, j, k in self.every_pixel():
             cell = self.cell_field[i,j,k]
             if cell:
                 if cell.type==1:#Avoiding errors with the solver making sure the wall doesn't take O2
                     field[i, j, k] = 0
             else:
-                field[i, j, k] = -v*(field[i+1, j, k]-field[i, j, k])+self.old_field[i,j,k]
-            
+                dC = -v*(self.old_field[i+1, j, k]-self.old_field[i, j, k])*(dt/dx)
+                field[i,j,k] -= dC
+                field[i+1,j,k] += dC
+                # field[i, j, k] = -v*(field[i+1, j, k]-field[i, j, k])*(dt/dx)+self.old_field[i,j,k]
+            sumat+= field[i,j,k]
         self.old_field = field
-
+        print(sumat)
     def finish(self):
         """
         Called after the last MCS to wrap up the simulation
