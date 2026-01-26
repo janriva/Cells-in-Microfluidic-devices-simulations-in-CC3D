@@ -60,9 +60,9 @@
                <Periodic/>
             </Plane>
             <Plane Axis="Y">
-               <!-- <ConstantDerivative PlanePosition="Min" Value="0.0"/> -->
-               <!-- <ConstantDerivative PlanePosition="Max" Value="0.0"/> -->
-               <Periodic/>
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+               <!-- <Periodic/> -->
             </Plane>
          </BoundaryConditions>
       </DiffusionField>
