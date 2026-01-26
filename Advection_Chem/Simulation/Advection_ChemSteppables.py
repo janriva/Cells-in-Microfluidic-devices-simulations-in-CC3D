@@ -38,8 +38,10 @@ class Advection_ChemSteppable(SteppableBasePy):
                     field[i,j,k] += dC
                 elif i==0:
                     dC = -v*(self.old_field[i+1, j, k]-self.old_field[99, j, k])*(dt/dx)
+                    field[i,j,k] += dC
                 elif i==99:
                     dC = -v*(self.old_field[0, j, k]-self.old_field[i-1, j, k])*(dt/dx)
+                    field[i,j,k] += dC
             sumat+= field[i,j,k]
         self.old_field = field
         print(sumat)
