@@ -1,0 +1,108 @@
+<CompuCell3D Revision="5" Version="4.7.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>2</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+      <MCSConversionFactor DisplayName="No conversion" Units="-">1.0</MCSConversionFactor>
+      <VoxelConversionFactor DisplayName="No conversion" Units="-">1.0</VoxelConversionFactor>
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="100" y="100" z="1"/>
+      <Steps>100000</Steps>
+      <Temperature>10.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+      <Boundary_x>Periodic</Boundary_x>
+      <Boundary_y>Periodic</Boundary_y>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType Freeze="" TypeId="1" TypeName="Wall"/>
+      <CellType TypeId="2" TypeName="Cell"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"/>
+   
+   <Plugin Name="ExternalPotential">
+      
+      <!-- External force applied to cell. Each cell has different force and force components have to be managed in Python. -->
+      <!-- e.g. cell.lambdaVecX=0.5; cell.lambdaVecY=0.1 ; cell.lambdaVecZ=0.3; -->
+      <Algorithm>CenterOfMassBased</Algorithm>
+   </Plugin>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   <Plugin Name="PixelTracker"/>
+   
+   <Plugin Name="Contact">
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">10.0</Energy>
+      <Energy Type1="Medium" Type2="Wall">10.0</Energy>
+      <Energy Type1="Medium" Type2="Cell">3.0</Energy>
+      <Energy Type1="Wall" Type2="Wall">10.0</Energy>
+      <Energy Type1="Wall" Type2="Cell">10.0</Energy>
+      <Energy Type1="Cell" Type2="Cell">2.0</Energy>
+      <NeighborOrder>4</NeighborOrder>
+   </Plugin>
+   
+   <Steppable Type="DiffusionSolverFE">
+      
+      <!-- Specification of PDE solvers -->
+      <DiffusionField Name="OXYGEN">
+         <DiffusionData>
+            <FieldName>OXYGEN</FieldName>
+            <GlobalDiffusionConstant>1</GlobalDiffusionConstant>
+            <GlobalDecayConstant>0.0</GlobalDecayConstant>
+            <InitialConcentrationExpression>0.0</InitialConcentrationExpression>
+            <DiffusionCoefficient CellType="Wall">0.0</DiffusionCoefficient>
+            <DecayCoefficient CellType="Wall">0.0</DecayCoefficient>
+            <DiffusionCoefficient CellType="Cell">0.1</DiffusionCoefficient>
+            <DecayCoefficient CellType="Cell">0.0</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Medium"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Wall"/>
+            <Uptake MaxUptake="1.0" RelativeUptakeRate="0.1" Type="Cell"/>
+         </SecretionData>
+         <BoundaryConditions>
+            <Plane Axis="X">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+               <!-- <Periodic/> -->
+            </Plane>
+            <Plane Axis="Y">
+               <!-- <Periodic/> -->
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+   </Steppable>
+   
+   <Steppable Type="UniformInitializer">
+      
+      <!-- <Initial layout of cells in the form of rectangular slab> -->
+      <Region>
+         <BoxMin x="20" y="76" z="0"/>
+         <BoxMax x="30" y="84" z="1"/>
+         <Gap>0</Gap>
+         <Width>2</Width>
+         <Types>Cell</Types>
+      </Region>
+   </Steppable>
+</CompuCell3D>
