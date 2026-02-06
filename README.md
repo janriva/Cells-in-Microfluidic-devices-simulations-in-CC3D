@@ -10,3 +10,7 @@ This simulation tries to implement advection to a diffusive chemical field in CC
 ### 2. CellInLiquid
 
 The simulation uses three types of cells to simulate cell behaivour in a liquid with flux. The small type of cell have the objective to work as small bubbles of liquid that is being pushed to the right. Then we have a freezed cell that works as a wall to build the different constrictions of the simulation. And finally the usual cells that grow in the liquid while getting pushed by the liquid.
+
+### 3. CellsInMicrofluidic
+
+This code try to combine the two previous simulation to get an understanding of the cell growth in a Porous Microfluidic Device. A nutrient that limit the cell growth is present that difusses and move with a flux. To avoid using a lot of computational resources the liquid cells of the CellInLiquid simulation where avoided adding insted a force to the cell proportional to the velocity of the flux.
