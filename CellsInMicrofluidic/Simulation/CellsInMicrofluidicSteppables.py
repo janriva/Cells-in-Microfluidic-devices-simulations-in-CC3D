@@ -1,3 +1,5 @@
+from cc3d.cpp.PlayerPython import * 
+from cc3d import CompuCellSetup
 from cc3d.core.PySteppables import *
 import numpy as np
 
@@ -8,7 +10,9 @@ class ConstraintInitializerSteppable(SteppableBasePy):
         SteppableBasePy.__init__(self,frequency)
 
     def start(self):
-        shape = [2,2]
+        self.flux = 1
+        
+        shape = [3,3]
         wallWidth  =  1
         circleRadius= self.dim.x/(max(shape)*2) -2
         holeWidth = 5 #degrees half width
@@ -122,15 +126,16 @@ class ConstraintInitializerSteppable(SteppableBasePy):
         
         for cell in self.cell_list_by_type(self.CELL):
 
-            cell.targetVolume = 10
+            cell.targetVolume = 8
             cell.lambdaVolume = 4.0
             
         field = self.field.OXYGEN
+        field[30:40,30:40,:]=1 #aliment inicial
         self.old_field=field
         
         self.v= []
         l_h = 2*circleRadius*np.cos(np.pi/2-holeWidth*np.pi/180)
-        self.v_0 = 0.5
+        self.v_0 = 1*self.flux
         for j in range(self.dim.y):
             for jj in range(shape[1]):
                 if j<pasy_circ+2*pasy_circ*jj+circleRadius:
@@ -146,9 +151,50 @@ class ConstraintInitializerSteppable(SteppableBasePy):
                 l = l_h
             
             self.v.append(self.v_0*l_h/l)
-            
+        
+        #alternativa calc v
+        camp_cell = self.cell_field
+        
+        arr_cell = np.zeros((self.dim.x,self.dim.y))
+        
+        for jj in range(self.dim.y):
+            for ii in range(self.dim.x):
+                cell =  camp_cell[ii,jj,0]
+                if cell:
+                    if cell.type == 1:
+                        arr_cell[ii,jj] = 1
+                    else:
+                        arr_cell[ii,jj] = 0
+                else:
+                    arr_cell[ii,jj] = 0
+                if ii == 0 or ii == self.dim.x -1 or jj==0 or jj == self.dim.y-1:
+                    arr_cell[ii,jj] = 1
+                
+        self.camp_v = self.create_scalar_field_py("Velocity")
+
+        for ii in range(self.dim.x):
+            for jj in range(self.dim.y):
+                if camp_cell[ii,jj,0]:
+                    self.camp_v[ii,jj,:] = 0
+                    continue
+                if ii == 0:
+                    pos_esq = 0
+                    pos_dret = np.argmax(arr_cell[ii:,jj])
+                elif ii == self.dim.x -1:
+                    pos_esq = np.argmax(np.flip(arr_cell[:ii,jj]))
+                    pos_dret = 0
+                else:
+                    pos_dret = np.argmax(arr_cell[ii:,jj])
+                    pos_esq = np.argmax(np.flip(arr_cell[:ii,jj]))
+                
+                l = pos_dret+pos_esq
+                if l !=0 and l>=l_h:
+                    self.camp_v[ii,jj,:] = self.v_0*l_h/l
+                else:
+                    self.camp_v[ii,jj,:] = self.v_0   
+                    
     def step(self,mcs):
-        shape = [2,2]
+        shape = [3,3]
         wallWidth  =  1
         circleRadius= self.dim.x/(max(shape)*2) -2
         holeWidth = 5 #degrees half width
@@ -168,17 +214,13 @@ class ConstraintInitializerSteppable(SteppableBasePy):
             else:
                 l = 2*circleRadius*np.cos(np.pi/2-holeWidth*np.pi/180)
             
-            cell.lambdaVecY = -circleRadius/l * 50
+            cell.lambdaVecY = -circleRadius/l * 10 *self.flux
             
         
         
         field = self.field.OXYGEN
-        # v = 0.1
-        dt = 1
-        dx = 1
-        field[24:27, 0, :] = 1*np.sin(mcs/100)**2
-        field[74:77, 0, :] = 1*np.sin(mcs/100)**2
-        # field[74:77, 20, :] = 1
+        field[:, 0, :] = 1*np.sin(mcs/100)**2
+        # field[148:152, 0, :] = 1*np.sin(mcs/100)**2
         
         for i, j, k in self.every_pixel():
             cell = self.cell_field[i,j,k]
@@ -186,14 +228,15 @@ class ConstraintInitializerSteppable(SteppableBasePy):
                 if cell.type==1:#Avoiding errors with the solver making sure the wall doesn't take O2
                     field[i, j, k] = 0
             else:
-                if j!= 0 and j!=99:
-                    dC = -(self.v[j+1]*self.old_field[i, j+1, k]-self.v[j-1]*self.old_field[i, j-1, k])*(dt/dx)
+                if j!= 0 and j!=self.dim.y-1:
+                    # dC = -(self.v[j+1]*self.old_field[i, j+1, k]-self.v[j-1]*self.old_field[i, j-1, k])
+                    dC = -(self.camp_v[i,j+1,k]*self.old_field[i, j+1, k]-self.camp_v[i,j-1,k]*self.old_field[i, j-1, k])
+                    field[i,j,k] += np.float64(dC)
+                elif j==0:
+                    dC = -self.v_0*(self.old_field[i, j+1, k]-self.old_field[i, 99, k])
                     field[i,j,k] += dC
-                elif i==0:
-                    dC = -self.v_0*(self.old_field[i, j+1, k]-self.old_field[i, 99, k])*(dt/dx)
-                    field[i,j,k] += dC
-                elif i==99:
-                    dC = -self.v_0*(self.old_field[i, 0, k]-self.old_field[i, j-1, k])*(dt/dx)
+                elif j==self.dim.y-1:
+                    dC = -self.v_0*(self.old_field[i, 0, k]-self.old_field[i, j-1, k])
                     field[i,j,k] += dC
         self.old_field = field
                         
@@ -201,31 +244,40 @@ class ConstraintInitializerSteppable(SteppableBasePy):
 class GrowthSteppable(SteppableBasePy):
     def __init__(self,frequency=1):
         SteppableBasePy.__init__(self, frequency)
+        
+    def start(self):
+        for cell in self.cell_list_by_type(self.CELL):
+            cell.dict["uptake"] = 0
 
     def step(self, mcs):
-        # for cell in self.cell_list_by_type(self.CELL):
-            # cell.targetVolume += 0.1
+        secretor = self.get_field_secretor("OXYGEN")
+        for cell in self.cell_list_by_type(self.CELL):     
+            # arguments are: cell, max uptake, relative uptake
+            Um = secretor.uptakeInsideCellTotalCount(cell, 0.2, 0.02)
+            cell.dict["uptake"] = np.abs(Um.tot_amount)
+            cell.targetVolume += 1*cell.dict["uptake"]
 
         # # alternatively if you want to make growth a function of chemical concentration uncomment lines below and comment lines above        
 
         field = self.field.OXYGEN
         
-        for cell in self.cell_list:
-            concentrationAtCOM = field[int(cell.xCOM), int(cell.yCOM), int(cell.zCOM)]
+        # for cell in self.cell_list:
+            # concentrationAtCOM = field[int(cell.xCOM), int(cell.yCOM), int(cell.zCOM)]
 
             # you can use here any fcn of concentrationAtCOM
-            cell.targetVolume += 0.1 * concentrationAtCOM       
+            # cell.targetVolume += 0.1 * concentrationAtCOM       
 
         
 class MitosisSteppable(MitosisSteppableBase):
     def __init__(self,frequency=1):
         MitosisSteppableBase.__init__(self,frequency)
+        
 
     def step(self, mcs):
 
         cells_to_divide=[]
         for cell in self.cell_list_by_type(self.CELL):
-            if cell.volume>20:
+            if cell.volume>15:
                 cells_to_divide.append(cell)
 
         for cell in cells_to_divide:

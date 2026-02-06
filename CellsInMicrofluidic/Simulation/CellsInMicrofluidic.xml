@@ -3,7 +3,7 @@
    <Metadata>
       
       <!-- Basic properties simulation -->
-      <NumberOfProcessors>2</NumberOfProcessors>
+      <NumberOfProcessors>3</NumberOfProcessors>
       <DebugOutputFrequency>10</DebugOutputFrequency>
       <!-- <NonParallelModule Name="Potts"/> -->
       <MCSConversionFactor DisplayName="No conversion" Units="-">1.0</MCSConversionFactor>
@@ -13,7 +13,7 @@
    <Potts>
       
       <!-- Basic properties of CPM (GGH) algorithm -->
-      <Dimensions x="100" y="100" z="1"/>
+      <Dimensions x="200" y="200" z="1"/>
       <Steps>100000</Steps>
       <Temperature>10.0</Temperature>
       <NeighborOrder>1</NeighborOrder>
@@ -53,12 +53,16 @@
       <!-- Specification of adhesion energies -->
       <Energy Type1="Medium" Type2="Medium">10.0</Energy>
       <Energy Type1="Medium" Type2="Wall">10.0</Energy>
-      <Energy Type1="Medium" Type2="Cell">3.0</Energy>
+      <Energy Type1="Medium" Type2="Cell">8.0</Energy>
       <Energy Type1="Wall" Type2="Wall">10.0</Energy>
       <Energy Type1="Wall" Type2="Cell">10.0</Energy>
-      <Energy Type1="Cell" Type2="Cell">2.0</Energy>
+      <Energy Type1="Cell" Type2="Cell">3.0</Energy>
       <NeighborOrder>4</NeighborOrder>
    </Plugin>
+   
+   <Plugin Name="Secretion">
+    </Plugin>
+
    
    <Steppable Type="DiffusionSolverFE">
       
@@ -69,7 +73,7 @@
             <GlobalDiffusionConstant>1</GlobalDiffusionConstant>
             <GlobalDecayConstant>0.0</GlobalDecayConstant>
             <InitialConcentrationExpression>0.0</InitialConcentrationExpression>
-            <DiffusionCoefficient CellType="Wall">0.0</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="Wall">1.0</DiffusionCoefficient>
             <DecayCoefficient CellType="Wall">0.0</DecayCoefficient>
             <DiffusionCoefficient CellType="Cell">0.1</DiffusionCoefficient>
             <DecayCoefficient CellType="Cell">0.0</DecayCoefficient>
@@ -77,7 +81,7 @@
          <SecretionData>
             <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Medium"/>
             <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Wall"/>
-            <Uptake MaxUptake="1.0" RelativeUptakeRate="0.1" Type="Cell"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Cell"/>
          </SecretionData>
          <BoundaryConditions>
             <Plane Axis="X">
@@ -98,8 +102,8 @@
       
       <!-- <Initial layout of cells in the form of rectangular slab> -->
       <Region>
-         <BoxMin x="20" y="76" z="0"/>
-         <BoxMax x="30" y="84" z="1"/>
+         <BoxMin x="30" y="30" z="0"/>
+         <BoxMax x="40" y="40" z="1"/>
          <Gap>0</Gap>
          <Width>2</Width>
          <Types>Cell</Types>
