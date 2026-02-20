@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/CellInPorusMicrofluidic.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/CellInPorusMicrofluidic.py</PythonScript>
+   <Resource Type="Python">Simulation/CellInPorusMicrofluidicSteppables.py</Resource>
+</Simulation>
