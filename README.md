@@ -22,3 +22,17 @@ Builds a porus media using a probability distrubiution where cells grow and beca
 ### 5. CellInPorusMedia3D
 
 Same as *4* but in 3D. There is also a comented block in the steppables that adds a new secretor from the cell that degrades the walls.
+
+
+### 6. ProvesCanviCells
+
+3D simulation that implements a cell eating a wall.
+
+### 7. WallDegradetion
+
+2D simulation of a wall and existing cells that segragate a chemical that degradetes the wall little by little. This is also implemented, but comented in the code, in the simulation *5*
+
+
+### 8. WetableGrowth
+
+3D simulation that simulates a group of cells growing in a desired surface. Changing the contact energy between cells and the wall you can see different behaivours.
