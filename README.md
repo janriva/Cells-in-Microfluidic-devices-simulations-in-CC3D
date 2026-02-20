@@ -14,3 +14,10 @@ The simulation uses three types of cells to simulate cell behaivour in a liquid 
 ### 3. CellsInMicrofluidic
 
 This code try to combine the two previous simulation to get an understanding of the cell growth in a Porous Microfluidic Device. A nutrient that limit the cell growth is present that difusses and move with a flux. To avoid using a lot of computational resources the liquid cells of the CellInLiquid simulation where avoided adding insted a force to the cell proportional to the velocity of the flux.
+
+### 4. CellInPorusMicrofluidic
+
+Builds a porus media using a probability distrubiution where cells grow and became more complex thanks to a nutrient present that difuses. Complexity is implemented as a new parameter of each cells that changes while uptaking the nutrient from the media, the cell decides randomly if it grows bigger or it makes the complexity higher.
+
+
+There is a comented block that adds a new secretor from the cell that degrades the walls
