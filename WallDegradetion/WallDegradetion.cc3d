@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/WallDegradetion.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/WallDegradetion.py</PythonScript>
+   <Resource Type="Python">Simulation/WallDegradetionSteppables.py</Resource>
+</Simulation>
