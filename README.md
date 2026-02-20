@@ -21,7 +21,7 @@ Builds a porus media using a probability distrubiution where cells grow and beca
 
 ### 5. CellInPorusMedia3D
 
-Same as *4* but in 3D. There is also a comented block in the steppables that adds a new secretor from the cell that degrades the walls.
+Same as *4* but in 3D. There is also a comented block in the steppables that adds a new secretor from the cell that degrades the walls, core idea at simulation *7*.
 
 
 ### 6. ProvesCanviCells
@@ -30,7 +30,7 @@ Same as *4* but in 3D. There is also a comented block in the steppables that add
 
 ### 7. WallDegradetion
 
-2D simulation of a wall and existing cells that segragate a chemical that degradetes the wall little by little. This is also implemented, but comented in the code, in the simulation *5*
+2D simulation of a wall and existing cells that segragate a chemical that degradetes the wall little by little. This is also implemented, but comented in the code, in the simulation *5*.
 
 
 ### 8. WetableGrowth
