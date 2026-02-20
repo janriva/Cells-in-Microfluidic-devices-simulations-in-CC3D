@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/ProvesCanviCells.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/ProvesCanviCells.py</PythonScript>
+   <Resource Type="Python">Simulation/ProvesCanviCellsSteppables.py</Resource>
+</Simulation>

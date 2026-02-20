@@ -1,0 +1,71 @@
+<CompuCell3D Revision="5" Version="4.7.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+      <MCSConversionFactor DisplayName="No conversion" Units="-">1.0</MCSConversionFactor>
+      <VoxelConversionFactor DisplayName="No conversion" Units="-">1.0</VoxelConversionFactor>
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="50" y="50" z="50"/>
+      <Steps>10000</Steps>
+      <Temperature>10.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType Freeze="" TypeId="1" TypeName="Wall"/>
+      <CellType TypeId="2" TypeName="Cell"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"/>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Plugin Name="ExternalPotential">
+      
+      <!-- External force applied to cell. Each cell has different force and force components have to be managed in Python. -->
+      <!-- e.g. cell.lambdaVecX=0.5; cell.lambdaVecY=0.1 ; cell.lambdaVecZ=0.3; -->
+      <Algorithm>CenterOfMassBased</Algorithm>
+   </Plugin>
+   
+   <Plugin Name="Contact">
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">10.0</Energy>
+      <Energy Type1="Medium" Type2="Wall">10.0</Energy>
+      <Energy Type1="Medium" Type2="Cell">8.0</Energy>
+      <Energy Type1="Wall" Type2="Wall">10.0</Energy>
+      <Energy Type1="Wall" Type2="Cell">20.0</Energy>
+      <Energy Type1="Cell" Type2="Cell">5.0</Energy>
+      <NeighborOrder>4</NeighborOrder>
+   </Plugin>
+   
+   <Steppable Type="UniformInitializer">
+      
+      <!-- Initial layout of cells in the form of rectangular slab -->
+      <Region>
+         <BoxMin x="30" y="30" z="30"/>
+         <BoxMax x="40" y="40" z="40"/>
+         <Gap>0</Gap>
+         <Width>7</Width>
+         <Types>Cell</Types>
+      </Region>
+   </Steppable>
+</CompuCell3D>
