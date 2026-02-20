@@ -19,5 +19,6 @@ This code try to combine the two previous simulation to get an understanding of 
 
 Builds a porus media using a probability distrubiution where cells grow and became more complex thanks to a nutrient present that difuses. Complexity is implemented as a new parameter of each cells that changes while uptaking the nutrient from the media, the cell decides randomly if it grows bigger or it makes the complexity higher.
 
+### 5. CellInPorusMedia3D
 
-There is a comented block that adds a new secretor from the cell that degrades the walls
+Same as *4* but in 3D. There is also a comented block in the steppables that adds a new secretor from the cell that degrades the walls.
