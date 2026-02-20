@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/CellInPorusMedia3D.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/CellInPorusMedia3D.py</PythonScript>
+   <Resource Type="Python">Simulation/CellInPorusMedia3DSteppables.py</Resource>
+</Simulation>
