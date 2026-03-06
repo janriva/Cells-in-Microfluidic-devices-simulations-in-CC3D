@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/WetableGrowth.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/WetableGrowth.py</PythonScript>
+   <Resource Type="Python">Simulation/WetableGrowthSteppables.py</Resource>
+</Simulation>
