@@ -21,26 +21,25 @@ class Advection_ChemSteppable(SteppableBasePy):
         
         :param mcs: current Monte Carlo step
         """
-        dt = 1
-        dx = 1
+        
         field = self.field.OXYGEN
-        v = 0.1 #No pot ser mes gran o igual que 1 sino peta
-        # field[60:65, 50:55, :] = 1 #per anar afegint material
+        v = 0.1 #can not be <= 1
+        # field[60:65, 50:55, :] = 1 #adding material eacg step
         sumat = 0
         for i, j, k in self.every_pixel():
             cell = self.cell_field[i,j,k]
             if cell:
-                if cell.type==1:#Avoiding errors with the solver making sure the wall doesn't take O2
+                if cell.type==1:#Avoiding errors with the solver making sure the wall doesn't take O2 if Wall present
                     field[i, j, k] = 0
-            else:
+            else: #making the cehmical to advect
                 if i!= 0 and i!=99:
-                    dC = -v*(self.old_field[i+1, j, k]-self.old_field[i-1, j, k])*(dt/dx)
+                    dC = -v*(self.old_field[i+1, j, k]-self.old_field[i-1, j, k])
                     field[i,j,k] += dC
                 elif i==0:
-                    dC = -v*(self.old_field[i+1, j, k]-self.old_field[99, j, k])*(dt/dx)
+                    dC = -v*(self.old_field[i+1, j, k]-self.old_field[99, j, k])
                     field[i,j,k] += dC
                 elif i==99:
-                    dC = -v*(self.old_field[0, j, k]-self.old_field[i-1, j, k])*(dt/dx)
+                    dC = -v*(self.old_field[0, j, k]-self.old_field[i-1, j, k])
                     field[i,j,k] += dC
             sumat+= field[i,j,k]
         self.old_field = field
