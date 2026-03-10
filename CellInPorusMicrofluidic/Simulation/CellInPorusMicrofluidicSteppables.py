@@ -46,7 +46,7 @@ class ConstraintInitializerSteppable(SteppableBasePy):
         # pos_cent_y = np.random.randint(0,self.dim.y, size = N_porus)
         
         newCell = self.new_cell(self.WALL)
-        
+        #porus generation with cells in center
         for nn1 in range(N_porus):
             newCell2 = self.new_cell(self.CELL)
             # if nn1%2 ==0 :
@@ -80,48 +80,7 @@ class ConstraintInitializerSteppable(SteppableBasePy):
             cell.lambdaVolume = 2.0
         
         field = self.field.Nutr
-        field[:,:,:]=1 #aliment inicial
-        
-        camp_cell = self.cell_field
-        self.v_0 = 1*self.flux
-        l_h = 1
-        arr_cell = np.zeros((self.dim.x,self.dim.y))
-        
-        for jj in range(self.dim.y):
-            for ii in range(self.dim.x):
-                cell =  camp_cell[ii,jj,0]
-                if cell:
-                    if cell.type == 1:
-                        arr_cell[ii,jj] = 1
-                    else:
-                        arr_cell[ii,jj] = 0
-                else:
-                    arr_cell[ii,jj] = 0
-                if ii == 0 or ii == self.dim.x -1 or jj==0 or jj == self.dim.y-1:
-                    arr_cell[ii,jj] = 1
-                
-        self.camp_v = self.create_scalar_field_py("Velocity")
-
-        for ii in range(self.dim.x):
-            for jj in range(self.dim.y):
-                if camp_cell[ii,jj,0]:
-                    self.camp_v[ii,jj,:] = 0
-                    continue
-                if ii == 0:
-                    pos_esq = 0
-                    pos_dret = np.argmax(arr_cell[ii:,jj])
-                elif ii == self.dim.x -1:
-                    pos_esq = np.argmax(np.flip(arr_cell[:ii,jj]))
-                    pos_dret = 0
-                else:
-                    pos_dret = np.argmax(arr_cell[ii:,jj])
-                    pos_esq = np.argmax(np.flip(arr_cell[:ii,jj]))
-                
-                l = pos_dret+pos_esq
-                if l !=0 and l>=l_h:
-                    self.camp_v[ii,jj,:] = self.v_0*l_h/l
-                else:
-                    self.camp_v[ii,jj,:] = self.v_0
+        field[:,:,:]=1 #initial nutrient
         
     def step(self,mcs):
 
@@ -136,7 +95,9 @@ class ConstraintInitializerSteppable(SteppableBasePy):
             # arguments are (name of the data series, x, y)
             self.plot_win.add_data_point("VolComp", vol, comp)
             
-            cell.lambdaVecY = 80
+            cell.lambdaVecY = 80 #coment to take the force out
+
+        #ensuring constant concentration
         field = self.field.Nutr
         # field[:,:,:] = 1
         # field[:,self.dim.y-1,:]=1
@@ -155,7 +116,8 @@ class GrowthSteppable(SteppableBasePy):
             cell.dict["complexity"] = 0
 
     def step(self, mcs):          
-        
+
+        #growing the cell depending on the uptake
         secretor = self.get_field_secretor("Nutr")
         for cell in self.cell_list_by_type(self.CELL):
             rat= 2-np.exp(-cell.dict["complexity"])
@@ -175,16 +137,6 @@ class GrowthSteppable(SteppableBasePy):
                     cell.dict["complexity"] += cell.dict["uptake"]
                     cell.dict["uptake"] = 0
             
-
-        # # alternatively if you want to make growth a function of chemical concentration uncomment lines below and comment lines above        
-
-        # field = self.field.CHEMICAL_FIELD_NAME
-        
-        # for cell in self.cell_list:
-            # concentrationAtCOM = field[int(cell.xCOM), int(cell.yCOM), int(cell.zCOM)]
-
-            # # you can use here any fcn of concentrationAtCOM
-            # cell.targetVolume += 0.01 * concentrationAtCOM       
 
         
 class MitosisSteppable(MitosisSteppableBase):
