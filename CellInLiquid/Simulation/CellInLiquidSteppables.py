@@ -25,7 +25,7 @@ class ConstraintInitializerSteppable(SteppableBasePy):
             cell.dict["oldXcm"]=cell.xCOM       # dict entry for old cell x CM
             cell.dict["oldYcm"]=cell.yCOM       # dict entry for old cell y CM
         
-           
+        #making all wall cells one cell   
         firstWall = None
         for cell in self.cell_list_by_type(self.WALL):
             if firstWall:
@@ -54,15 +54,7 @@ class GrowthSteppable(SteppableBasePy):
         for cell in self.cell_list_by_type(self.CELL):
             cell.targetVolume += 0.1        
 
-        # # alternatively if you want to make growth a function of chemical concentration uncomment lines below and comment lines above        
-
-        # field = self.field.CHEMICAL_FIELD_NAME
-        
-        # for cell in self.cell_list:
-            # concentrationAtCOM = field[int(cell.xCOM), int(cell.yCOM), int(cell.zCOM)]
-
-            # # you can use here any fcn of concentrationAtCOM
-            # cell.targetVolume += 0.01 * concentrationAtCOM       
+      
         timeinterval = 10      # time interval between cell events (source/sink)
         if mcs%timeinterval == 0:
             x = 5                   # cell source x position
@@ -159,14 +151,4 @@ class MitosisSteppable(MitosisSteppableBase):
         # reducing parent target volume
         self.parent_cell.targetVolume /= 2.0                  
 
-        self.clone_parent_2_child()            
-
-        # for more control of what gets copied from parent to child use cloneAttributes function
-        # self.clone_attributes(source_cell=self.parent_cell, target_cell=self.child_cell, no_clone_key_dict_list=[attrib1, attrib2]) 
-        
-        if self.parent_cell.type==1:
-            self.child_cell.type=1
-        else:
-            self.child_cell.type=1
-
-        
+        self.clone_parent_2_child()
