@@ -11,10 +11,12 @@ class ProvesCanviCellsSteppable(SteppableBasePy):
         """
         Called before MCS=0 while building the initial simulation
         """
-        
+
+        #creating the wall
         newCell = self.new_cell(self.WALL)
         self.cell_field[0:25,0:50,0:50] = newCell
-        
+
+        #setting cells parameters
         for cell in self.cell_list_by_type(self.CELL):
 
             cell.targetVolume = 30
@@ -28,15 +30,17 @@ class ProvesCanviCellsSteppable(SteppableBasePy):
         :param mcs: current Monte Carlo step
         """
         
-        
+        #looking for each cell if it's in contact with the wall and delating the voxel closets to cell COM
         for cell in self.cell_list_by_type(self.CELL):
-            detect = False
+            detect = False 
             for neighbor, com_surf in self.get_cell_neighbor_data_list(cell):
-                if neighbor:
+                if neighbor: #if neighbor exists and it's the wall (type 1) detect = True
                     if neighbor.type == 1:
                         detect = True
                         break
-            
+
+            #if the cell is close to the wall and the time of the event is correct
+            #(every 10 mcs an event can occur) deleate the closest wall voxel
             if detect and mcs%10 == 0:
                 xCOM = cell.xCOM
                 yCOM = cell.yCOM
@@ -69,7 +73,8 @@ class ProvesCanviCellsSteppable(SteppableBasePy):
                     
                     
                 point = 5    
-                
+
+                #looking for the closest voxel
                 dist_old = 3*self.dim.x**2
                 for ii in range(int(xCOM-esq),int(xCOM+dret)):
                     for jj in range(int(yCOM-baix),int(yCOM+dalt)):
@@ -82,7 +87,7 @@ class ProvesCanviCellsSteppable(SteppableBasePy):
                                     if dist<dist_old:
                                         point = (ii,jj,kk)
                                         dist_old=dist
-                if point!=5:
+                if point!=5: #if closest voxel found, delate wall voxel
                     
                     self.cell_field[point[0],point[1],point[2]] = None
                 
