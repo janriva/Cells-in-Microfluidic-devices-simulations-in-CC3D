@@ -12,14 +12,16 @@ class WallDegradetionSteppable(SteppableBasePy):
         Called before MCS=0 while building the initial simulation
         """
         
+        #setting cells parameters
         for cell in self.cell_list_by_type(self.CELL):
             cell.targetVolume = 20
             cell.lambdaVolume = 4.0
-            
+
+        #creating the wall
         self.cell_field[0:20,:,:] = self.new_cell(self.WALL)
-        
+
+        #saving the wall points inside a list to keep track of it
         self.wall_points = []
-        
         for ii, jj, kk in self.every_pixel():
             cell = self.cell_field[ii,jj,kk]
             if cell:
@@ -33,17 +35,16 @@ class WallDegradetionSteppable(SteppableBasePy):
         :param mcs: current Monte Carlo step
         """
 
+        #make cells secreate
         for cell in self.cell_list_by_type(self.CELL):
-            # Make sure Secretion plugin is loaded
-            # make sure this field is defined in one of the PDE solvers
-            # you may reuse secretor for many cells. Simply define it outside the loop
             secretor = self.get_field_secretor("Degr")
             secretor.secreteOutsideCellAtBoundary(cell, 0.1)
-            # tot_amount = secretor.secreteOutsideCellAtBoundaryTotalCount(cell, 300).tot_amount
         
         
         field = self.field.Degr
         nn = 0
+        #make walls to uptake the chemical field and delate the pixel if it uptaked enough
+        #cheking for each wall pixel saved in the list before where the fourth element we save the uptaked amount
         for pp in self.wall_points:
             cell = self.cell_field[pp[0],pp[1],pp[2]]
             if cell:
