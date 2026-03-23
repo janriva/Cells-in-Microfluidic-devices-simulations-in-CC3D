@@ -8,7 +8,7 @@ class ConstraintInitializerSteppable(SteppableBasePy):
         SteppableBasePy.__init__(self,frequency)
 
     def start(self):
-        
+        #creating the plots
         self.plot_win = self.add_new_plot_window(title='Volume/Complexity',
                                                  x_axis_title='Volume',
                                                  y_axis_title='Complexity', x_scale_type='linear', y_scale_type='linear',
@@ -18,16 +18,18 @@ class ConstraintInitializerSteppable(SteppableBasePy):
         self.plot_win.save_plot_as_data("plots.txt",CSV_FORMAT)
         
         
-        self.flux = 1
+        self.flux = 1 #1 for flux, 0 for not flux
         
+        #porus parameters
         wallWidth  =  2
         circleRadius= 50
         N_porus = 20
         dim = self.dim.x
+        #probability distribution parameters
         pics = 3
         sig = 1
         
-        #Posicions depenent de distribució de probabilitat
+        #creating the probability distribution (PD)
         dist_prob=np.zeros(dim)
         for pp in range(pics):
             # dist_prob += np.sinc(2*np.pi*(np.arange(0,dim)-pp*dim/pics))
@@ -37,48 +39,53 @@ class ConstraintInitializerSteppable(SteppableBasePy):
         dist_prob[:5] = 0
         dist_prob[-5:]=0
         dist_prob = dist_prob/dist_prob.sum()
+        #Selecting the porus positions based on PD
         pos_cent_x = np.random.choice(self.dim.x,size=N_porus, p = dist_prob, replace=False)
         pos_cent_y = np.random.choice(self.dim.y,size=N_porus, p = dist_prob, replace=False)
         
         
-        #Posicions aleatòries amb distribuicó uniforme
+        #If we want uniform distribution use next:
         # pos_cent_x = np.random.randint(0,self.dim.x, size = N_porus)
         # pos_cent_y = np.random.randint(0,self.dim.y, size = N_porus)
+
         
         newCell = self.new_cell(self.WALL)
         #porus generation with cells in center
         for nn1 in range(N_porus):
+            #adding the cells at the center
             newCell2 = self.new_cell(self.CELL)
-            # if nn1%2 ==0 :
             centx = int(pos_cent_x[nn1])
             centy = int(pos_cent_y[nn1])
             self.cell_field[centx-6:centx+6, centy-6:centy+6,:] = newCell2
-                
+            #create the circle wall (porus)
             for dd in range(wallWidth):
                 R = circleRadius+dd
                 for ang in np.linspace(0,2*np.pi, 4*(int(R))):
                     dins = False
                     px = int(pos_cent_x[nn1]+R* np.cos(ang))
                     py = int(pos_cent_y[nn1]+R* np.sin(ang))
+                    #check if inside a porus and far from edges
                     if (px+2<= self.dim.x-1 and px>=0) and (py+2<=self.dim.y-1 and py>=0):
                         for nn2 in range(N_porus):
                             if nn1!=nn2:
                                 if ((px-pos_cent_x[nn2])**2 + (py-pos_cent_y[nn2])**2)<(circleRadius)**2:
                                     dins = True
                                     break
-                        
+                        #if not inside create the new cell
                         if not(dins):
                             self.cell_field[px:px+2,py:py+2,:] = newCell
         self.cell_field[0,:,:] = newCell
         self.cell_field[self.dim.x-1,:,:] = newCell
         self.cell_field[:,0,:] = newCell
         self.cell_field[:,self.dim.y-1,:] = newCell
-        
+
+        #setting cells parameters
         for cell in self.cell_list_by_type(self.CELL):
 
             cell.targetVolume = 45
             cell.lambdaVolume = 2.0
-        
+
+        #Creating initial nutrient field
         field = self.field.Nutr
         field[:,:,:]=1 #initial nutrient
         
@@ -90,6 +97,8 @@ class ConstraintInitializerSteppable(SteppableBasePy):
             if cell.volume < 3:
                 self.delete_cell(cell)
                 continue
+
+            #saving complexity and volume parameters in plot
             comp = cell.dict["complexity"]
             vol = cell.volume
             # arguments are (name of the data series, x, y)
@@ -102,7 +111,7 @@ class ConstraintInitializerSteppable(SteppableBasePy):
         # field[:,:,:] = 1
         # field[:,self.dim.y-1,:]=1
         
-        
+        #saving data as a txt in CSV format
         self.plot_win.save_plot_as_data("plots.txt",CSV_FORMAT)
  
  
@@ -111,23 +120,24 @@ class GrowthSteppable(SteppableBasePy):
         SteppableBasePy.__init__(self, frequency)
         
     def start(self):
+        #creating the new information of cells
         for cell in self.cell_list_by_type(self.CELL):
             cell.dict["uptake"] = 0
             cell.dict["complexity"] = 0
 
     def step(self, mcs):          
 
-        #growing the cell depending on the uptake
+         #make cells uptake
         secretor = self.get_field_secretor("Nutr")
         for cell in self.cell_list_by_type(self.CELL):
-            rat= 2-np.exp(-cell.dict["complexity"])
+            rat= 2-np.exp(-cell.dict["complexity"]) #more complex cells uptake more nutrients
             # arguments are: cell, max uptake, relative uptake
             # Um = secretor.uptakeInsideCellTotalCount(cell, 0.05*rat, 0.2)
             Um = secretor.uptakeOutsideCellAtBoundaryTotalCount(cell, 0.05*rat, 1)
             
             
             cell.dict["uptake"] += np.abs(Um.tot_amount)
-            
+            #make cells grow randomly in volume or complexity when having enough nutrients saved
             if cell.dict["uptake"]>0.1:
                 gr_co = np.random.randint(0,2)
                 if gr_co == 0:                    
@@ -163,16 +173,6 @@ class MitosisSteppable(MitosisSteppableBase):
         self.parent_cell.targetVolume /= 2.0
 
         self.clone_parent_2_child()
-        
+         #dividing complexity as mitosis happen since organuls will split into parent and child
         self.parent_cell.dict["complexity"] /= 2.0
         self.child_cell.dict["complexity"] /= 2.0
-
-        # for more control of what gets copied from parent to child use cloneAttributes function
-        # self.clone_attributes(source_cell=self.parent_cell, target_cell=self.child_cell, no_clone_key_dict_list=[attrib1, attrib2]) 
-        
-        # if self.parent_cell.type==1:
-            # self.child_cell.type=1
-        # else:
-            # self.child_cell.type=1
-
-        
