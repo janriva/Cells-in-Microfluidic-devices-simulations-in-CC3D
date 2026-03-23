@@ -36,3 +36,10 @@ Same as *4* but in 3D. There is also a comented block in the steppables that add
 ### 8. WetableGrowth
 
 3D simulation that simulates a group of cells growing in a desired surface. Changing the contact energy between cells and the wall you can see different behaivours.
+
+### 9. ColonyGrowSimulation
+
+Implemented simulation of colony grow based on the work of Kannan, H., Sun, H., Warren, M. et al. (citation below). This simulation ables to study further constraints like geometry effects (circle agar implemented) or different affinities with the wall (contact energies).
+
+Article:
+Kannan, H., Sun, H., Warren, M. et al. Spatiotemporal development of expanding bacterial colonies driven by emergent mechanical constraints and nutrient gradients. Nat Commun 16, 4878 (2025). https://doi.org/10.1038/s41467-025-60004-z
