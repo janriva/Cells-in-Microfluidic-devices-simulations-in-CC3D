@@ -1,0 +1,213 @@
+<CompuCell3D Revision="5" Version="4.7.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>6</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+      <MCSConversionFactor DisplayName="No conversion" Units="-">1.0</MCSConversionFactor>
+      <VoxelConversionFactor DisplayName="No conversion" Units="-">1.0</VoxelConversionFactor>
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm x = 800 for plane and 1000 steps-->
+      <Dimensions x="2100" y="1" z="400"/>
+      <Steps>2000</Steps>
+      <Temperature>10.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType Freeze="" TypeId="1" TypeName="Wall"/>
+      <CellType TypeId="2" TypeName="Cell"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"/>
+   
+   <Plugin Name="Surface"/>
+   
+   <Plugin Name="ExternalPotential">
+   
+   <!-- External force applied to cell. Each cell type has different force. -->
+   <!-- For more flexible specification of the constraint (done in Python) please use ExternalPotential plugin without specifying per-type parameters -->
+   <!-- Algorithm options are: PixelBased, CenterOfMassBased -->
+   <Algorithm>CenterOfMassBased</Algorithm>
+</Plugin>
+
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Plugin Name="PixelTracker">
+      
+      <!-- Module tracking pixels of each cell -->
+   </Plugin>
+   
+   <Plugin Name="Secretion">
+   </Plugin>
+
+    <Plugin Name="Connectivity">
+   <!-- Connectivity constraint applied to each cell. Energy penalty specifies how strong the constraint is. Penalty is specified globally for each cell  -->
+   <!-- This constraint works in 2D and on square lattice only! It also requires that the <NeighborOrder> in the Potts section is 1 or 2! -->
+   <!-- For more flexible version of this plugin use ConnectivityLocalFlex where constraint penalty is specified for each cell individually using Python scripting using the following syntax -->
+   <!-- self.connectivityLocalFlexPlugin.setConnectivityStrength(cell,10000000) -->
+   <Penalty>10000000</Penalty>
+</Plugin>
+
+   
+   <Plugin Name="Contact">
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">10.0</Energy>
+      <Energy Type1="Medium" Type2="Wall">10.0</Energy>
+      <Energy Type1="Medium" Type2="Cell">10.0</Energy>
+      <Energy Type1="Wall" Type2="Wall">10.0</Energy>
+      <Energy Type1="Wall" Type2="Cell">0.0</Energy>
+      <Energy Type1="Cell" Type2="Cell">6.0</Energy>
+      <NeighborOrder>4</NeighborOrder>
+   </Plugin>
+   
+   <Steppable Type="DiffusionSolverFE">
+      
+      <!-- Specification of PDE solvers -->
+      <DiffusionField Name="Glu">
+         <DiffusionData>
+            <FieldName>Glu</FieldName>
+            <GlobalDiffusionConstant>0.0</GlobalDiffusionConstant>
+            <GlobalDecayConstant>0.0</GlobalDecayConstant>
+            <InitialConcentrationExpression>0.0</InitialConcentrationExpression>
+            <DiffusionCoefficient CellType="Wall">7.4</DiffusionCoefficient>
+            <DecayCoefficient CellType="Wall">0.0</DecayCoefficient>
+            <DiffusionCoefficient CellType="Cell">1.1</DiffusionCoefficient>
+            <DecayCoefficient CellType="Cell">0.0</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Medium"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Wall"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Cell"/>
+            <!-- When secretion is defined inside DiffusionSolverFE all secretion constants are scaled automatically to account for the extra calls to the diffusion step when handling large diffusion constants -->
+            
+            <!-- Uniform secretion Definition -->
+            <!-- <Secretion Type="Wall">0.1</Secretion> -->
+            <!-- <Secretion Type="Cell">0.1</Secretion> -->
+            <!-- <SecretionOnContact SecreteOnContactWith="Wall,Cell" Type="Cell">0.2</SecretionOnContact> -->
+            <!-- <ConstantConcentration Type="Cell">0.1</ConstantConcentration> -->
+         </SecretionData>
+         <BoundaryConditions>
+            <Plane Axis="X">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <!-- <ConstantValue PlanePosition="Min" Value="10.0"/> -->
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+               <!-- <ConstantValue PlanePosition="Max" Value="10.0"/> -->
+            </Plane>
+            <Plane Axis="Y">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+            <Plane Axis="Z">
+               <ConstantValue PlanePosition="Min" Value="1000.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+      <DiffusionField Name="O2">
+         <DiffusionData>
+            <FieldName>O2</FieldName>
+            <GlobalDiffusionConstant>10</GlobalDiffusionConstant>
+            <GlobalDecayConstant>0.0</GlobalDecayConstant>
+            <InitialConcentrationExpression>0.0</InitialConcentrationExpression>
+            <DiffusionCoefficient CellType="Wall">25</DiffusionCoefficient>
+            <DecayCoefficient CellType="Wall">0.0</DecayCoefficient>
+            <DiffusionCoefficient CellType="Cell">3.75</DiffusionCoefficient>
+            <DecayCoefficient CellType="Cell">0.0</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Medium"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Wall"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Cell"/>
+            <!-- When secretion is defined inside DiffusionSolverFE all secretion constants are scaled automatically to account for the extra calls to the diffusion step when handling large diffusion constants -->
+            
+            <!-- Uniform secretion Definition -->
+            <!-- <Secretion Type="Wall">0.1</Secretion> -->
+            <!-- <Secretion Type="Cell">0.1</Secretion> -->
+            <!-- <SecretionOnContact SecreteOnContactWith="Wall,Cell" Type="Cell">0.2</SecretionOnContact> -->
+            <!-- <ConstantConcentration Type="Cell">0.1</ConstantConcentration> -->
+         </SecretionData>
+         <BoundaryConditions>
+            <Plane Axis="X">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+            <Plane Axis="Y">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+            <Plane Axis="Z">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantValue PlanePosition="Max" Value="1000.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+      <DiffusionField Name="Ac">
+         <DiffusionData>
+            <FieldName>Ac</FieldName>
+            <GlobalDiffusionConstant>0.0</GlobalDiffusionConstant>
+            <GlobalDecayConstant>0.0</GlobalDecayConstant>
+            <InitialConcentrationExpression>0.0</InitialConcentrationExpression>
+            <DiffusionCoefficient CellType="Wall">11</DiffusionCoefficient>
+            <DecayCoefficient CellType="Wall">0.0</DecayCoefficient>
+            <DiffusionCoefficient CellType="Cell">1.65</DiffusionCoefficient>
+            <DecayCoefficient CellType="Cell">0.0</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Medium"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Wall"/>
+            <Uptake MaxUptake="0.0" RelativeUptakeRate="0.0" Type="Cell"/>
+            <!-- When secretion is defined inside DiffusionSolverFE all secretion constants are scaled automatically to account for the extra calls to the diffusion step when handling large diffusion constants -->
+            
+            <!-- Uniform secretion Definition -->
+            <!-- <Secretion Type="Wall">0.1</Secretion> -->
+            <!-- <Secretion Type="Cell">0.1</Secretion> -->
+            <!-- <SecretionOnContact SecreteOnContactWith="Wall,Cell" Type="Cell">0.2</SecretionOnContact> -->
+            <!-- <ConstantConcentration Type="Cell">0.1</ConstantConcentration> -->
+         </SecretionData>
+         <BoundaryConditions>
+            <Plane Axis="X">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+            <Plane Axis="Y">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+            <Plane Axis="Z">
+               <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+               <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+   </Steppable>
+   
+   <Steppable Type="BlobInitializer">
+      
+      <!-- Initial layout of cells in the form of spherical (circular in 2D) blob -->
+      <Region>
+         <Center x="1050" y="0" z="100"/>
+         <Radius>20</Radius>
+         <Gap>0</Gap>
+         <Width>4</Width>
+         <Types>Cell</Types>
+      </Region>
+   </Steppable>
+</CompuCell3D>

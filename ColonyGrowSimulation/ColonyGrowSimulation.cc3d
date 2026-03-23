@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/ColonyGrowSimulation.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/ColonyGrowSimulation.py</PythonScript>
+   <Resource Type="Python">Simulation/ColonyGrowSimulationSteppables.py</Resource>
+</Simulation>
