@@ -1,0 +1,5 @@
+<Simulation version="4.7.0">
+   <XMLScript Type="XMLScript">Simulation/TCellsActivation2.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/TCellsActivation2.py</PythonScript>
+   <Resource Type="Python">Simulation/TCellsActivation2Steppables.py</Resource>
+</Simulation>
