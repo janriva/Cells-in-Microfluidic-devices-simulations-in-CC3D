@@ -44,6 +44,15 @@ Implemented simulation of colony grow based on the work of Kannan, H., Sun, H., 
 Article:
 Kannan, H., Sun, H., Warren, M. et al. Spatiotemporal development of expanding bacterial colonies driven by emergent mechanical constraints and nutrient gradients. Nat Commun 16, 4878 (2025). https://doi.org/10.1038/s41467-025-60004-z
 
-### 10. TCellsActivation2
+### 10. RealisticCellsGrow
+
+Extention of *9* to cells. Here you can change and work with all different parameters from the affinity of cells to the wall, to their growth, the quantity of nutrients etc.
+
+### 11. TCellsActivation2
 
 A 2D simulation that tries an aproach on T-Cells activation. Using a Boltzman-like probability the T-Cells can activate in contact with the wall, higher the contact on the wall higher the probability of activation. When activated the cells change in type (for visual porpouses) and shape and starts to grow and duplicate. When duplicated the T-cells have a probability to become exausted and stop to proliferate, this probability depend on the generation of the cell and can have different shapes to study different behaivours.
+
+
+### 12. TCellsActivation3D
+
+Extention of *11* to 3D. In addition, there is different geometries of the wall and starting position of cells like dynabeads or random height start from cells for exemple. Also reactivation is implemented as an option if wanted and the sedimentation of cells.
